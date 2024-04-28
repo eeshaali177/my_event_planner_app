@@ -1,6 +1,7 @@
+
 <p style="color: green"><%= notice %></p>
 
-<h1>Events</h1>
+<h1>Your Events</h1>
 
 <div id="events">
   <% @events.each do |event| %>
@@ -11,4 +12,23 @@
   <% end %>
 </div>
 
-<%= link_to "New event", new_event_path %>
+<hr>
+
+<h1>Other Users' Events</h1>
+
+<div id="other_users_events">
+  <% @other_users_events.each do |event| %>
+    <p>
+      Event Title: <%= event.title %><br>
+      Event Creator Email: <%= @event_creators_emails[@other_users_events.index(event)] %>
+      <%= link_to "Show this event", event %>
+      <!-- Edit and Destroy options are hidden for other users' events -->
+      <% if current_user != event.user %>
+        <!-- Hide Edit option -->
+        <%= link_to "Edit", edit_event_path(event), style: "display: none" %>
+        <!-- Hide Destroy option -->
+        <%= button_to "Destroy", event, method: :delete, style: "display: none" %>
+      <% end %>
+    </p>
+  <% end %>
+</div>

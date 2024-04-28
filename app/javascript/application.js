@@ -4,4 +4,4 @@ import "controllers"
 //= require jquery
 //= require jquery_ujs
 //= require turbolinks
-//= require_tree .
+//= require_tree .import "channels"

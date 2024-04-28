@@ -3,12 +3,12 @@ class EventsController < ApplicationController
   before_action :authenticate_user!
   # GET /events or /events.json
   def index
-    if current_user
+    
       @events = current_user.events
-    else
-     
-      redirect_to new_user_session_path
-    end
+      @other_users_events = Event.where.not(user_id: current_user.id)
+      @event_creators_emails = User.where(id: @other_users_events.pluck(:user_id)).pluck(:email) # Fetching emails of event creators
+
+  p @event_creators_emails
   end
 
   # GET /events/1 or /events/1.json
@@ -24,6 +24,12 @@ class EventsController < ApplicationController
 
   # GET /events/1/edit
   def edit
+    @event = Event.find(params[:id])
+    # Ensure current user is the creator of the event
+    if current_user != @event.user
+      flash[:alert] = "You are not authorized to edit this event."
+      redirect_to events_path
+    end
   end
 
   # POST /events or /events.json
@@ -44,7 +50,10 @@ class EventsController < ApplicationController
   # PATCH/PUT /events/1 or /events/1.json
   def update
     respond_to do |format|
-      if @event.update(event_params)
+      if current_user != @event.user
+        format.html { redirect_to events_url, alert: "You are not authorized to update this event." }
+        format.json { render json: { error: "You are not authorized to update this event." }, status: :unauthorized }
+      elsif @event.update(event_params)
         format.html { redirect_to @event, notice: "Event was successfully updated." }
         format.json { render :show, status: :ok, location: @event }
       else
@@ -53,16 +62,30 @@ class EventsController < ApplicationController
       end
     end
   end
-
+  
   # DELETE /events/1 or /events/1.json
   def destroy
-    @event.destroy!
-
-    respond_to do |format|
-      format.html { redirect_to events_url, notice: "Event was successfully destroyed." }
-      format.json { head :no_content }
+    @event = Event.find_by(id: params[:id])
+    if @event.nil?
+      respond_to do |format|
+        format.html { redirect_to events_url, alert: "Event not found." }
+        format.json { render json: { error: "Event not found." }, status: :not_found }
+      end
+    elsif current_user != @event.user
+      respond_to do |format|
+        format.html { redirect_to events_url, alert: "You are not authorized to delete this event." }
+        format.json { render json: { error: "You are not authorized to delete this event." }, status: :unauthorized }
+      end
+    else
+      @event.destroy!
+      respond_to do |format|
+        format.html { redirect_to events_url, notice: "Event was successfully destroyed." }
+        format.json { head :no_content }
+      end
     end
   end
+  
+  
 
   private
 

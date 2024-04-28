@@ -32,6 +32,8 @@ def index
       @invitation.sender_id = current_user.id
       respond_to do |format|
         if @invitation.save
+          
+          
           format.html { redirect_to @event, notice: "Invitation was successfully created." }
           format.json { render :show, status: :created, location: @invitation }
         else
