@@ -1,13 +1,13 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  sender_id: 1
-  recipient_email: MyString
-  content: MyText
-  read: false
+  recipient_id: 1
+  event_id: 1
+  read_at: 2024-04-29 21:10:37
+  seen_at: 2024-04-29 21:10:37
 
 two:
-  sender_id: 1
-  recipient_email: MyString
-  content: MyText
-  read: false
+  recipient_id: 1
+  event_id: 1
+  read_at: 2024-04-29 21:10:37
+  seen_at: 2024-04-29 21:10:37

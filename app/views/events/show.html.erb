@@ -1,13 +1,29 @@
 <p style="color: green"><%= notice %></p>
 
-<%= render @event %>
+<h2><%= @event.title %></h2>
+<p><%= @event.description %></p>
+<p>Date: <%= @event.date.strftime("%B %d, %Y") %></p>
+<p>Time: <%= @event.time.strftime("%I:%M %p") %></p>
+<p>Location: <%= @event.location %></p>
 
 <div>
-<%= link_to "Back to Events", events_path %> <!-- Back to Events link -->
-
+  <%= link_to "Back to Events", events_path %> 
   <%= link_to "Edit this event", edit_event_path(@event) %> 
-
-   
   <%= button_to "Destroy this event", @event, method: :delete %>
+  <%= link_to "Invite user",new_event_invitation_path(@event) %>
 </div>
-<%= link_to "Invite",   new_event_invitation_path(@event) %>
+
+<h3>Comments</h3>
+!-- Comment Form -->
+      <%= form_with(model: [@event, @comment], local: true) do |form| %>
+        <%= form.text_area :content, placeholder: "Add a comment..." %>
+        <%= form.hidden_field :user_id, value: current_user.id %>
+        <%= form.submit "Submit" %>
+      <% end %>
+<ul>
+  <% @event.comments.each do |comment| %>
+    <li>
+      <strong><%= comment.user.email %>:</strong> <%= comment.content %>
+    </li>
+  <% end %>
+</ul>

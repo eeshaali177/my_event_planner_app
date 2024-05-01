@@ -1,0 +1,6 @@
+!-- Comment Form -->
+      <%= form_with(model: [@event, @comment], local: true) do |form| %>
+        <%= form.text_area :content, placeholder: "Add a comment..." %>
+        <%= form.hidden_field :user_id, value: current_user.id %>
+        <%= form.submit "Submit" %>
+      <% end %>

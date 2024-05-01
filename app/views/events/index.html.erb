@@ -4,12 +4,15 @@
 <h1>Your Events</h1>
 
 <div id="events">
-  <% @events.each do |event| %>
-    <%= render event %>
-    <p>
-      <%= link_to "Show this event", event %>
-    </p>
-  <% end %>
+<% @events.each do |event| %>
+  <p>
+  <%= event.title %> <%= link_to "Show", event %>
+  </p>
+<% end %>
+<%= link_to "New Event", new_event_path %>
+</div>
+
+ 
 </div>
 
 <hr>
@@ -32,3 +35,9 @@
     </p>
   <% end %>
 </div>
+<h2>Notifications</h2>
+<ul>
+  <% @notifications.each do |notification| %>
+    <li><%= notification.params[:message] %></li> <!-- Assuming 'message' is the attribute containing notification message -->
+  <% end %>
+</ul>

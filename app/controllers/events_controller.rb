@@ -7,16 +7,19 @@ class EventsController < ApplicationController
       @events = current_user.events
       @other_users_events = Event.where.not(user_id: current_user.id)
       @event_creators_emails = User.where(id: @other_users_events.pluck(:user_id)).pluck(:email) # Fetching emails of event creators
+      @notifications = Noticed::Notification.where(recipient_id: current_user.id, recipient_type: "User")
 
   p @event_creators_emails
   end
 
-  # GET /events/1 or /events/1.json
+  
   def show
+    @event = Event.find(params[:id])
     @invitation = @event.invitations
+    @comment= Comment.new
   end
 
-  # GET /events/new
+ 
   def new
     @event = Event.new
     @invitation = Invitation.new
