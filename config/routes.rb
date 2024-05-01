@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  devise_for :users
   get 'dashboard/index'
 
  
@@ -24,7 +25,8 @@ Rails.application.routes.draw do
   
   # Defines the root path route ("/")
   # root "posts#index"
-  devise_for :users
-  root to: "events#index"
-  get 'events/dashboard', to: 'events#index', as: :dashboard
+  
+ 
+  root to: "dashboard#index"
+
 end
