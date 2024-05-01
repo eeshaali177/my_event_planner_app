@@ -8,7 +8,7 @@ class Notification < ApplicationRecord
     accept_link = "<a href='#{accept_path}'><button type='button'>Accept</button></a>"
     reject_link = "<a href='#{reject_path}'><button type='button'>Reject</button></a>"
 
-    "You have been invited to the event: #{@event.title}
+    "You have been invited to the event: #{@event}
     <br>
     #{accept_link}
     #{reject_link}"

@@ -23,42 +23,41 @@ def index
   
   #POST /invitations or /invitations.json
   def create
-  if params[:event_id].present?
-    @event = Event.find(params[:event_id])
-    recipient_email = invitation_params[:recipient_email]
-    recipient_user = User.find_by(email: recipient_email)
+    if params[:event_id].present?
+      @event = Event.find(params[:event_id])
+      recipient_email = invitation_params[:recipient_email]
+      recipient_user = User.find_by(email: recipient_email)
   
-    if recipient_user
-      @invitation = @event.invitations.new(invitation_params)
-      @invitation.sender_id = current_user.id
-      respond_to do |format|
-        if @invitation.save
-          notification = Notification.create(event: @event, recipient: recipient_user)
-          message = notification.message_content(
-            accept_invitation_notification_path(id: notification.id),
-            reject_invitation_notification_path(id: notification.id)
-          )
-
-          InvitationNotificationNotifier.with(event: @event, inviter: current_user, invitee: recipient_user, message: message).deliver([recipient_user])
-
+      if recipient_user
+        @invitation = @event.invitations.new(invitation_params)
+        @invitation.sender_id = current_user.id
+        respond_to do |format|
+          if @invitation.save
+            notification = Notification.create(event: @event, recipient: recipient_user)
+            message = notification.message_content(
+              accept_invitation_notification_path(id: notification.id),
+              reject_invitation_notification_path(id: notification.id)
+            )
   
+            InvitationNotificationNotifier.with(event: @event, inviter: current_user, invitee: recipient_user, message: message).deliver([recipient_user])
   
-          format.html { redirect_to @event, notice: "Invitation was successfully created." }
-          format.json { render :show, status: :created, location: @invitation }
-        else
-          format.html { render :new, status: :unprocessable_entity }
-          format.json { render json: @invitation.errors, status: :unprocessable_entity }
+            format.html { redirect_to @event, notice: "Invitation was successfully created." }
+            format.json { render :show, status: :created, location: @invitation }
+          else
+            format.html { render :new, status: :unprocessable_entity }
+            format.json { render json: @invitation.errors, status: :unprocessable_entity }
+          end
         end
+      else
+        flash[:error] = "Invitation could not be sent. Recipient email not found in our records."
+        redirect_to @event
       end
     else
-      flash[:error] = "Invitation could not be sent. Recipient email not found in our records."
-      redirect_to @event
+      flash[:error] = "Event ID is missing in the parameters."
+      redirect_back(fallback_location: root_path)
     end
-  else
-    flash[:error] = "Event ID is missing in the parameters."
-    redirect_back(fallback_location: root_path)
   end
-end
+  
 
   #PATCH/PUT /invitations/1 or /invitations/1.json
   def update
